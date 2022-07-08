@@ -59,7 +59,7 @@ comment_first_page_xpath = '//*[@id="cbox_module"]/div/div[7]/div/strong/span[1]
 
 review_button_xpath = '//*[@id="movieEndTabMenu"]/li[6]/a'                   #review button
 #                      //*[@id="movieEndTabMenu"]/li[6]/a
-end_page = 500 # 할당받은 페이지로 수정하세요.
+end_page = 5 # 할당받은 페이지로 수정하세요.
 
 # //*[@id="cbox_module"]/div/div[7]/div/a[7]/span[1]
 # //*[@id="cbox_module"]/div/div[7]/div/a[3]/span
@@ -71,9 +71,10 @@ for i in range(1, end_page+1): #할당받은 끝 페이지
     authors = []
     intros = []
     comments = []
+
     try:
 
-        for j in range(1, 26): #25 -- 한 페이지에 25개 소설
+        for j in range(1, 3): #25 -- 한 페이지에 25개 소설
             driver.get(url)
             time.sleep(0.5)
             novel_xpath = '//*[@id="content"]/div/ul/li[{}]/div/h3/a'.format(j)  # 소설페이지
@@ -106,7 +107,7 @@ for i in range(1, end_page+1): #할당받은 끝 페이지
                         comments.append(comment)
 
                     try:
-                        for l in comment_page:
+                        for l in comment_page:#comment_page
                             driver.find_element('xpath', '//*[@id="cbox_module"]/div/div[7]/div/a[{}]'.format(l)).click()
                             time.sleep(0.3)
                         try:
@@ -120,7 +121,7 @@ for i in range(1, end_page+1): #할당받은 끝 페이지
                     except:
                         print('comment pages1', i, j, l, m)
                     try:
-                        for n in range(1, comment_range): #comment_range
+                        for n in range(1, 2): #comment_range
                             try:
                                 for o in to_comment_page:
                                     driver.find_element('xpath','//*[@id="cbox_module"]/div/div[7]/div/a[{}]'.format(o)).click()
@@ -140,14 +141,18 @@ for i in range(1, end_page+1): #할당받은 끝 페이지
                 # driver.back()
             except:
                 print('novel', i, j)
-        print(len(titles))
+
+        print(len(comments))
         print(titles)
         print(genres)
         print(intros)
         print(comments)
-        df = pd.DataFrame({'titles':titles, 'genres':genres, 'authors':authors, 'intros':intros, 'comments':comments})
-        df.info()
-        df.to_csv('.\crawling_data/naver_comments_{}_{}_page.csv'.format(end_page, i), index=False) #.format(end_page, i), index=False)
+        print(authors)
+        titles.replace("[", "")
+        titles.replace(']', "")
+        df_comment = pd.DataFrame({'titles': titles, 'genres': genres, 'authors': authors, 'intros': intros, 'comments': comments})
+        print(df_comment)
+        df_comment.to_csv('./crawling_data/naver_comments_{}_{}_page.csv'.format(i, j), index=False) #.format(end_page, i), index=False)
     except:
         print('page', i)
 
