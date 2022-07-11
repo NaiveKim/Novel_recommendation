@@ -19,4 +19,4 @@ for path in data_paths:
     df=pd.concat([df,df_temp], ignore_index=True)
 df.drop_duplicates(inplace=True)
 df.info()
-df.to_csv('./crawling_data/cleaned_reviews_2017_2022.csv', index=False)
+df.to_csv('./crawling_data/naver_comments_500_page.csv', index=False)

@@ -1,7 +1,5 @@
-import columns as columns
 from selenium import webdriver
 import pandas as pd
-from selenium.common.exceptions import NoSuchElementException
 import time
 
 options = webdriver.ChromeOptions()
@@ -56,15 +54,9 @@ comment_btn_xpath = '//*[@id="reviewCount"]'
 all_comment_btn_xpath = '//*[@id="cbox_module_wai_u_cbox_sort_option_tab2"]/span[2]'
 comment_number_xpath = '//*[@id="cbox_module"]/div/div[1]/span'
 comment_first_page_xpath = '//*[@id="cbox_module"]/div/div[7]/div/strong/span[1]'
+end_page = 500 # 할당받은 페이지로 수정하세요.
 
-review_button_xpath = '//*[@id="movieEndTabMenu"]/li[6]/a'                   #review button
-#                      //*[@id="movieEndTabMenu"]/li[6]/a
-end_page = 5 # 할당받은 페이지로 수정하세요.
-
-# //*[@id="cbox_module"]/div/div[7]/div/a[7]/span[1]
-# //*[@id="cbox_module"]/div/div[7]/div/a[3]/span
-
-for i in range(1, end_page+1): #할당받은 끝 페이지
+for i in range(2, end_page+1): #할당받은 끝 페이지
     url = 'https://series.naver.com/novel/categoryProductList.series?categoryTypeCode=all&genreCode=&orderTypeCode=sale&is&isFinished=false&page={}'.format(i)
     titles = []
     genres = []
@@ -74,7 +66,7 @@ for i in range(1, end_page+1): #할당받은 끝 페이지
 
     try:
 
-        for j in range(1, 3): #25 -- 한 페이지에 25개 소설
+        for j in range(1, 26): #25 -- 한 페이지에 25개 소설
             driver.get(url)
             time.sleep(0.5)
             novel_xpath = '//*[@id="content"]/div/ul/li[{}]/div/h3/a'.format(j)  # 소설페이지
@@ -82,18 +74,18 @@ for i in range(1, end_page+1): #할당받은 끝 페이지
             try:
                 title = driver.find_element("xpath", novel_xpath).text # 소설 제목 따기
                 driver.find_element("xpath", novel_xpath).click() # 소설 제목 클릭
-                time.sleep(0.3)
+                time.sleep(0.1)
                 genre = driver.find_element('xpath', genre_xpath).text # 소설 장르 따기
                 author = driver.find_element('xpath', author_xpath).text # 소설 작가 따기
                 intro = driver.find_element('xpath', intro_xpath).text # # 소설 소개 따기
-                titles.append(title)
+
                 genres.append(genre)
                 authors.append(author)
                 intros.append(intro)
                 driver.find_element('xpath', comment_btn_xpath).click() # 댓글창 이동
-                time.sleep(0.3)
+                time.sleep(0.1)
                 driver.find_element('xpath', all_comment_btn_xpath).click()
-                time.sleep(0.3)
+                time.sleep(0.1)
                 comment_range = driver.find_element('xpath', comment_number_xpath).text
                 comment_range = comment_range.replace(',', '')
                 comment_range = (int(comment_range)-1) // 75 + 2 #댓글 한페이지당 15개 댓글, 5개씩 댓글 페이지 정렬
@@ -104,16 +96,18 @@ for i in range(1, end_page+1): #할당받은 끝 페이지
                     for k in range(1, 16):
                         comment_xpath = '//*[@id="cbox_module_wai_u_cbox_content_wrap_tabpanel"]/ul/li[{}]/div[1]/div/div[2]'.format(k)
                         comment = driver.find_element('xpath', comment_xpath).text
+                        titles.append(title)
                         comments.append(comment)
 
                     try:
                         for l in comment_page:#comment_page
                             driver.find_element('xpath', '//*[@id="cbox_module"]/div/div[7]/div/a[{}]'.format(l)).click()
-                            time.sleep(0.3)
+                            time.sleep(0.1)
                         try:
                             for m in range(1, 16):
                                 comment_xpath = '//*[@id="cbox_module_wai_u_cbox_content_wrap_tabpanel"]/ul/li[{}]/div[1]/div/div[2]'.format(m)
                                 comment = driver.find_element('xpath', comment_xpath).text
+                                titles.append(title)
                                 comments.append(comment)
                         except:
                             print('error')
@@ -121,15 +115,16 @@ for i in range(1, end_page+1): #할당받은 끝 페이지
                     except:
                         print('comment pages1', i, j, l, m)
                     try:
-                        for n in range(1, 2): #comment_range
+                        for n in range(1, comment_range): #comment_range
                             try:
                                 for o in to_comment_page:
                                     driver.find_element('xpath','//*[@id="cbox_module"]/div/div[7]/div/a[{}]'.format(o)).click()
-                                    time.sleep(0.3)
+                                    time.sleep(0.1)
 
                                     for p in range(1, 16):
                                         comment_xpath = '//*[@id="cbox_module_wai_u_cbox_content_wrap_tabpanel"]/ul/li[{}]/div[1]/div/div[2]'.format(p)
                                         comment = driver.find_element('xpath', comment_xpath).text
+                                        titles.append(title)
                                         comments.append(comment)
                             except:
                                 print('comment_each', i, j, l, m, o, p)
@@ -142,20 +137,20 @@ for i in range(1, end_page+1): #할당받은 끝 페이지
             except:
                 print('novel', i, j)
 
-        print(len(comments))
-        print(titles)
-        print(genres)
-        print(intros)
-        print(comments)
-        print(authors)
-        titles.replace("[", "")
-        titles.replace(']', "")
-        df_comment = pd.DataFrame({'titles': titles, 'genres': genres, 'authors': authors, 'intros': intros, 'comments': comments})
-        print(df_comment)
-        df_comment.to_csv('./crawling_data/naver_comments_{}_{}_page.csv'.format(i, j), index=False) #.format(end_page, i), index=False)
+        comment_list = list(comments)
+        len(comment_list)
+        df = pd.DataFrame({"""titles""": titles, """comments""": comment_list})
+        print(df)
+        df.to_csv('./crawling_data/naver_comments_{}_{}_page.csv'.format(end_page, i), index=False) #.format(end_page, i), index=False)
     except:
         print('page', i)
-
-
+# print(len(comments))
+# print(titles)
+# print(genres)
+# print(intros)
+# print(comments)
+# print(authors)
+# )
+# print(df)
 
 driver.close()
