@@ -1,3 +1,6 @@
+
+# 이거쓰세요
+
 ### 기존 작성
 
 # import pandas as pd
@@ -54,19 +57,20 @@ import pandas as pd
 from konlpy.tag import Okt
 import re
 
-df = pd.read_csv('./crawling_data/reviews_2017_2022.csv')
+df = pd.read_csv('./naver_comments_1404_page.csv')
 df.info()
 
 okt = Okt()
 
 df_stopwords = pd.read_csv('./stopwords.csv')
 stopwords = list(df_stopwords['stopword'])
-stopwords = stopwords + ['영화', '연출', '관객', '개봉', '개봉일', '주인공', '출연', '배우', '리뷰',
-                         '촬영', '각본', '극장', '감독', '네이버', '박스', '오피스', '박스오피스',
-                         '장면']
+stopwords = stopwords + ['잘볼께요', '굿', '조지는거냐', '레알', '왓더퍽', '고고', '수고', '답글', '음',
+                         '와', '인정', '존나', '웅앵웅', '제발','짱개', '시펄', '어머', '으이구', '아이고', '아', '개',
+                         '미친', '아놔', '꺄', '퉷', '머지', '으와', '뭐', '홀랭', '웍', '쯧','쯧쯧','올','와우','흐음',
+                         '까꿍', '아니', '띠용', '크으', '왤케', '야발', '조땠네', '깐붘', '응앸', '하필', '헐', '굳굳', '꺼억', '어우', '유휴', '흠', '아닉']
 count = 0
 cleaned_sentences = []
-for review in df.reviews:
+for review in df.comments:
     count += 1
     if count % 10 == 0:
         print('.', end='')
@@ -96,8 +100,8 @@ for review in df.reviews:
     cleaned_sentences.append(cleaned_sentence)
 
 df['cleaned_sentences'] = cleaned_sentences
-df = df[['title', 'cleaned_sentences']]
+df = df[['titles', 'cleaned_sentences']]
 df.dropna(inplace=True)
 
-df.to_csv('./crawling_data/review_2017_2022(cleaned).csv', index=False)
+df.to_csv('./naver_comments_(cleaned).csv', index=False)
 df.info()
