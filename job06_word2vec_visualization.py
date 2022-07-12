@@ -11,8 +11,8 @@ font_name = font_manager.FontProperties(
 mpl.rcParams['axes.unicode_minus']=False
 rc('font', family=font_name)
 
-embedding_model = Word2Vec.load('./models/word2vec_2017_2022_movies.model')
-key_word = '디씨'
+embedding_model = Word2Vec.load('./models/word2vec_comments.model')
+key_word = '겨울'
 sim_word = embedding_model.wv.most_similar(key_word, topn=10)
 print(sim_word)
 

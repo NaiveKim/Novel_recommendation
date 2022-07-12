@@ -3,11 +3,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.io import mmwrite, mmread
 import pickle
 
-df_reviews = pd.read_csv('./crawling_data/reviews_2017_2022.csv')
+df_reviews = pd.read_csv('./cleaned_comment_1480_one.csv')
 df_reviews.info()
 
 Tfidf = TfidfVectorizer(sublinear_tf=True)
-Tfidf_matrix = Tfidf.fit_transform(df_reviews['reviews'])
+Tfidf_matrix = Tfidf.fit_transform(df_reviews['cleaned_sentences'])
 print(Tfidf_matrix.shape)
 # (3182, 84461)
 print(Tfidf_matrix[0].shape)
@@ -15,4 +15,4 @@ print(Tfidf_matrix[0].shape)
 with open('./models/tfidf.pickle', 'wb') as f:
     pickle.dump(Tfidf, f)
 
-mmwrite('./models/Tfidf_movie_review.mtx', Tfidf_matrix)
+mmwrite('./models/Tfidf_novel_review.mtx', Tfidf_matrix)
