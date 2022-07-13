@@ -17,7 +17,7 @@ font_name = font_manager.FontProperties(
 plt.rc('font', family='NanumBarunGothic')
 
 df= pd.read_csv('./cleaned_comment_1480_one.csv')
-words = df[df['cleaned_titles']=='타란튤라 ']['cleaned_sentences']
+words = df[df['cleaned_titles']=='구르미 그린 달빛 ']['cleaned_sentences']
 print(words.iloc[0])
 words = words.iloc[0].split()
 print(words)
